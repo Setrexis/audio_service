@@ -1,6 +1,7 @@
 import 'dart:async';
-import 'dart:io' show Platform;
+import 'dart:io' show File, Platform;
 import 'dart:isolate';
+import 'dart:typed_data';
 import 'dart:ui' as ui;
 import 'dart:ui';
 
@@ -1519,18 +1520,34 @@ class AudioServiceBackground {
   }
 
   static Future<void> _loadAllArtwork(List<MediaItem> queue) async {
+    int i = 0;
     for (var mediaItem in queue) {
-      await _loadArtwork(mediaItem);
+      await _loadArtwork(mediaItem, i: i);
+      i++;
     }
   }
 
-  static Future<String> _loadArtwork(MediaItem mediaItem) async {
+  static Future<String> _loadArtwork(MediaItem mediaItem, {int i = 1}) async {
     try {
       final artUri = mediaItem.artUri;
       if (artUri != null) {
         String local = _getLocalPath(artUri);
         if (local != null) {
           return local;
+        } else if (artUri.length < 12 && artUri.contains("-")) {
+          var s = artUri.split("-");
+          final String type = s[0];
+          final String id = s[1];
+          final FlutterAudioQuery audioQuery = FlutterAudioQuery();
+          Uint8List data = audioQuery.getArtwork();
+          /*final path = join(
+            // Store the picture in the temp directory.
+            // Find the temp directory using the `path_provider` plugin.
+            (await getTemporaryDirectory()).path,
+            '${DateTime.now().toString() + i.toString()}.png',
+          );*/
+          File f = File.fromRawPath(data);
+          return f.path;
         } else {
           final file = await _cacheManager.getSingleFile(mediaItem.artUri);
           return file.path;
