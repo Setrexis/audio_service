@@ -31,6 +31,9 @@ android {
     lintOptions {
         disable 'InvalidPackage'
     }
+    dependencies {
+        compileOnly rootProject.findProject(":flutter_audio_query")
+    }
 }
 
 dependencies {
