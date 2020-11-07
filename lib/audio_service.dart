@@ -1535,17 +1535,8 @@ class AudioServiceBackground {
         String local = _getLocalPath(artUri);
         if (local != null) {
           return local;
-        } else if (artUri.length < 6) {
-          final FlutterAudioQuery audioQuery = FlutterAudioQuery();
-          Uint8List data =
-              await audioQuery.getArtwork(type: ResourceType.SONG, id: artUri);
-          /*final path = join(
-            // Store the picture in the temp directory.
-            // Find the temp directory using the `path_provider` plugin.
-            (await getTemporaryDirectory()).path,
-            '${DateTime.now().toString() + i.toString()}.png',
-          );*/
-          File f = File.fromRawPath(data);
+        } else if (artUri.toLowerCase().startsWith("content://")) {
+          File f = File.fromUri(Uri(path: artUri));
           print(f.path);
           return f.path;
         } else {
