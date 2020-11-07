@@ -9,7 +9,6 @@ import 'package:audio_session/audio_session.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_audio_query/flutter_audio_query.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_isolate/flutter_isolate.dart';
 import 'package:rxdart/rxdart.dart';
