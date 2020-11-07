@@ -9,6 +9,7 @@ import 'package:audio_session/audio_session.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_audio_query/flutter_audio_query.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_isolate/flutter_isolate.dart';
 import 'package:rxdart/rxdart.dart';
@@ -1534,12 +1535,10 @@ class AudioServiceBackground {
         String local = _getLocalPath(artUri);
         if (local != null) {
           return local;
-        } else if (artUri.length < 12 && artUri.contains("-")) {
-          var s = artUri.split("-");
-          final String type = s[0];
-          final String id = s[1];
+        } else if (artUri.length < 6) {
           final FlutterAudioQuery audioQuery = FlutterAudioQuery();
-          Uint8List data = audioQuery.getArtwork();
+          Uint8List data =
+              await audioQuery.getArtwork(type: ResourceType.SONG, id: artUri);
           /*final path = join(
             // Store the picture in the temp directory.
             // Find the temp directory using the `path_provider` plugin.
@@ -1547,6 +1546,7 @@ class AudioServiceBackground {
             '${DateTime.now().toString() + i.toString()}.png',
           );*/
           File f = File.fromRawPath(data);
+          print(f.path);
           return f.path;
         } else {
           final file = await _cacheManager.getSingleFile(mediaItem.artUri);
