@@ -494,7 +494,7 @@ public class AudioService extends MediaBrowserServiceCompat {
 		if (bitmap != null) return bitmap;
 		try {
 			if(path.matches("[0-9]")){
-				print(path+ " is [0-9] regex conform");
+				System.out.println(path+ " is [0-9] regex conform");
 
 				Cursor cursor = context.getContentResolver().query(MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI, 
                 new String[] {MediaStore.Audio.Albums._ID, MediaStore.Audio.Albums.ALBUM_ART}, 
@@ -504,7 +504,7 @@ public class AudioService extends MediaBrowserServiceCompat {
 
 				if (cursor.moveToFirst()) {
 					path = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Albums.ALBUM_ART));
-					print(path);
+					System.out.println(path);
 					//bitmap = BitmapFactory.decodeFile(path);
 				}
 			}
