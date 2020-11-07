@@ -1535,10 +1535,9 @@ class AudioServiceBackground {
         String local = _getLocalPath(artUri);
         if (local != null) {
           return local;
-        } else if (artUri.toLowerCase().startsWith("content://")) {
-          File f = File.fromUri(Uri(path: artUri));
-          print(f.path);
-          return f.path;
+        } else if (artUri.contains(new RegExp(r"[0-9]"))) {
+          print(artUri);
+          return artUri;
         } else {
           final file = await _cacheManager.getSingleFile(mediaItem.artUri);
           return file.path;

@@ -30,6 +30,10 @@ import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.LruCache;
 import android.view.KeyEvent;
 
+import android.provider.MediaStore;
+import android.database.Cursor;
+import android.content.ContentUris;
+
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
 import androidx.media.MediaBrowserServiceCompat;
@@ -487,6 +491,19 @@ public class AudioService extends MediaBrowserServiceCompat {
 		Bitmap bitmap = artBitmapCache.get(path);
 		if (bitmap != null) return bitmap;
 		try {
+			if(path.matches("[0-9]")){
+				Cursor cursor = getContentResolver().query(MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI, 
+                new String[] {MediaStore.Audio.Albums._ID, MediaStore.Audio.Albums.ALBUM_ART}, 
+                MediaStore.Audio.Albums._ID+ "=?", 
+                new String[] {path}, 
+                null);
+
+				if (cursor.moveToFirst()) {
+					path = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Albums.ALBUM_ART));
+					//bitmap = BitmapFactory.decodeFile(path);
+				}
+			}
+
 			if (artDownscaleSize != null) {
 				BitmapFactory.Options options = new BitmapFactory.Options();
 				options.inJustDecodeBounds = true;
