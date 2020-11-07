@@ -513,7 +513,7 @@ public class AudioService extends MediaBrowserServiceCompat {
 
 				final Uri sArtworkUri = Uri.parse("content://media/external/audio/albumart");
 
-				Uri uri = ContentUris.withAppendedId(sArtworkUri, path);
+				Uri uri = ContentUris.withAppendedId(sArtworkUri, Long.parseLong(path));
 
 				ParcelFileDescriptor pfd = context.getContentResolver()
 					.openFileDescriptor(uri, "r");
