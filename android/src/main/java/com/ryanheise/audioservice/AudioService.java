@@ -496,7 +496,7 @@ public class AudioService extends MediaBrowserServiceCompat {
 			if(/*path.matches("[0-9]")*/true){
 				System.out.println(path+ " is [0-9] regex conform");
 
-				Cursor cursor = context.getContentResolver().query(MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI, 
+				/*Cursor cursor = context.getContentResolver().query(MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI, 
                 new String[] {MediaStore.Audio.Albums._ID, MediaStore.Audio.Albums.ALBUM_ART}, 
                 MediaStore.Audio.Albums._ID+ "=?", 
                 new String[] {path}, 
@@ -506,21 +506,50 @@ public class AudioService extends MediaBrowserServiceCompat {
 					path = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Albums.ALBUM_ART));
 					System.out.println(path);
 					//bitmap = BitmapFactory.decodeFile(path);
+				}*/
+
+				final Uri sArtworkUri = Uri
+                .parse("content://media/external/audio/albumart");
+
+				Uri uri = ContentUris.withAppendedId(sArtworkUri, path);
+
+				ParcelFileDescriptor pfd = context.getContentResolver()
+					.openFileDescriptor(uri, "r");
+
+				if (pfd != null) 
+				{
+					if (artDownscaleSize != null) {
+						BitmapFactory.Options options = new BitmapFactory.Options();
+						options.inJustDecodeBounds = true;
+						BitmapFactory.decodeFile(path, options);
+						int imageHeight = options.outHeight;
+						int imageWidth = options.outWidth;
+						options.inSampleSize = calculateInSampleSize(options, artDownscaleSize.width, artDownscaleSize.height);
+						options.inJustDecodeBounds = false;
+
+						FileDescriptor fd = pfd.getFileDescriptor();
+						bitmap = BitmapFactory.decodeFileDescriptor(fd,null,options);
+					}else{
+						FileDescriptor fd = pfd.getFileDescriptor();
+						bitmap = BitmapFactory.decodeFileDescriptor(fd);
+					}
 				}
 			}
 
-			if (artDownscaleSize != null) {
-				BitmapFactory.Options options = new BitmapFactory.Options();
-				options.inJustDecodeBounds = true;
-				BitmapFactory.decodeFile(path, options);
-				int imageHeight = options.outHeight;
-				int imageWidth = options.outWidth;
-				options.inSampleSize = calculateInSampleSize(options, artDownscaleSize.width, artDownscaleSize.height);
-				options.inJustDecodeBounds = false;
-
-				bitmap = BitmapFactory.decodeFile(path, options);
-			} else {
-				bitmap = BitmapFactory.decodeFile(path);
+			if(bitmap == null){
+				if (artDownscaleSize != null) {
+					BitmapFactory.Options options = new BitmapFactory.Options();
+					options.inJustDecodeBounds = true;
+					BitmapFactory.decodeFile(path, options);
+					int imageHeight = options.outHeight;
+					int imageWidth = options.outWidth;
+					options.inSampleSize = calculateInSampleSize(options, artDownscaleSize.width, artDownscaleSize.height);
+					options.inJustDecodeBounds = false;
+	
+					bitmap = BitmapFactory.decodeFile(path, options);
+				} else {
+					bitmap = BitmapFactory.decodeFile(path);
+				}
 			}
 			artBitmapCache.put(path, bitmap);
 			return bitmap;
