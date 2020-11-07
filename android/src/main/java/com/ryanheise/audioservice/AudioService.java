@@ -33,6 +33,9 @@ import android.view.KeyEvent;
 import android.provider.MediaStore;
 import android.database.Cursor;
 import android.content.ContentUris;
+import java.io.FileDescriptor;
+import android.os.ParcelFileDescriptor;
+import android.net.Uri;
 
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
@@ -508,8 +511,7 @@ public class AudioService extends MediaBrowserServiceCompat {
 					//bitmap = BitmapFactory.decodeFile(path);
 				}*/
 
-				final Uri sArtworkUri = Uri
-                .parse("content://media/external/audio/albumart");
+				final Uri sArtworkUri = Uri.parse("content://media/external/audio/albumart");
 
 				Uri uri = ContentUris.withAppendedId(sArtworkUri, path);
 
