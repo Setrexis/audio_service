@@ -493,7 +493,7 @@ public class AudioService extends MediaBrowserServiceCompat {
 		Bitmap bitmap = artBitmapCache.get(path);
 		if (bitmap != null) return bitmap;
 		try {
-			if(path.matches("[0-9]")){
+			if(/*path.matches("[0-9]")*/true){
 				System.out.println(path+ " is [0-9] regex conform");
 
 				Cursor cursor = context.getContentResolver().query(MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI, 
