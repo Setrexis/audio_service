@@ -496,20 +496,9 @@ public class AudioService extends MediaBrowserServiceCompat {
 		Bitmap bitmap = artBitmapCache.get(path);
 		if (bitmap != null) return bitmap;
 		try {
-			if(/*path.matches("[0-9]")*/true){
-				System.out.println(path+ " is [0-9] regex conform");
-
-				/*Cursor cursor = context.getContentResolver().query(MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI, 
-                new String[] {MediaStore.Audio.Albums._ID, MediaStore.Audio.Albums.ALBUM_ART}, 
-                MediaStore.Audio.Albums._ID+ "=?", 
-                new String[] {path}, 
-                null);
-
-				if (cursor.moveToFirst()) {
-					path = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Albums.ALBUM_ART));
-					System.out.println(path);
-					//bitmap = BitmapFactory.decodeFile(path);
-				}*/
+			// Check if path is not ap path but albumId from android Media Content
+			if(path.matches("[0-9]+")){
+				System.out.println(path+ " is [0-9]+ regex conform");
 
 				final Uri sArtworkUri = Uri.parse("content://media/external/audio/albumart");
 
