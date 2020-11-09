@@ -1534,7 +1534,7 @@ class AudioServiceBackground {
         String local = _getLocalPath(artUri);
         if (local != null) {
           return local;
-        } else if (artUri.contains(new RegExp(r"[0-9]"))) {
+        } else if (RegExp(r"[0-9]").hasMatch(artUri)) {
           print(artUri);
           return artUri;
         } else {
