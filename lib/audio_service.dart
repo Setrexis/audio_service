@@ -867,6 +867,23 @@ class AudioService {
     await _channel.invokeMethod('addQueueItemAt', [mediaItem.toJson(), index]);
   }
 
+  /// Sends a request to your background audio task to add an item to the
+  /// queue. This passes through to the `onAddQueueItems` method in your
+  /// background audio task.
+  static Future<void> addQueueItems(List<MediaItem> mediaItems) async {
+    await _channel.invokeMethod(
+        'addQueueItems', mediaItems.map((item) => item.toJson()).toList());
+  }
+
+  /// Sends a request to your background audio task to add a item to the queue
+  /// at a particular position. This passes through to the `onAddQueueItemsAt`
+  /// method in your background audio task.
+  /*static Future<void> addQueueItemsAt(
+      List<MediaItem> mediaItems, int index) async {
+    await _channel.invokeMethod('addQueueItemsAt',
+        [mediaItems.map((item) => item.toJson()).toList(), index]);
+  }*/
+
   /// Sends a request to your background audio task to remove an item from the
   /// queue. This passes through to the `onRemoveQueueItem` method in your
   /// background audio task.
@@ -878,11 +895,11 @@ class AudioService {
   /// given list. Note that this will be inefficient if you are adding a lot
   /// of media items at once. If possible, you should use [updateQueue]
   /// instead.
-  static Future<void> addQueueItems(List<MediaItem> mediaItems) async {
+  /*static Future<void> addQueueItems(List<MediaItem> mediaItems) async {
     for (var mediaItem in mediaItems) {
       await addQueueItem(mediaItem);
     }
-  }
+  }*/
 
   /// Sends a request to your background audio task to replace the queue with a
   /// new list of media items. This passes through to the `onUpdateQueue`
@@ -1240,12 +1257,21 @@ class AudioServiceBackground {
           case 'onAddQueueItem':
             await _task.onAddQueueItem(MediaItem.fromJson(call.arguments[0]));
             break;
+          case 'onAddQueueItems':
+            await _task.onAddQueueItems(MediaItem.fromJson(call.arguments[0]));
+            break;
           case 'onAddQueueItemAt':
             final List args = call.arguments;
             MediaItem mediaItem = MediaItem.fromJson(args[0]);
             int index = args[1];
             await _task.onAddQueueItemAt(mediaItem, index);
             break;
+          /*case 'onAddQueueItemsAt':
+            final List args = call.arguments;
+            MediaItem mediaItem = MediaItem.fromJson(args[0]);
+            int index = args[1];
+            await _task.onAddQueueItemsAt(mediaItem, index);
+            break;*/
           case 'onUpdateQueue':
             final List args = call.arguments;
             final List queue = args[0];
@@ -1702,6 +1728,10 @@ abstract class BackgroundAudioTask {
   /// as via a call to [AudioService.addQueueItem].
   Future<void> onAddQueueItem(MediaItem mediaItem) async {}
 
+  /// Called when a client has requested to add a media item to the queue, such
+  /// as via a call to [AudioService.addQueueItem].
+  Future<void> onAddQueueItems(List<MediaItem> mediaItem) async {}
+
   /// Called when the Flutter UI has requested to set a new queue.
   ///
   /// If you use a queue, your implementation of this method should call
@@ -1718,9 +1748,11 @@ abstract class BackgroundAudioTask {
   /// [AudioService.addQueueItemAt].
   Future<void> onAddQueueItemAt(MediaItem mediaItem, int index) async {}
 
+  /// Called when a client has requested to add a media item to the queue at a
+  /*Future<void> onAddQueueItemsAt(List<MediaItem> mediaItem, int index) async {}*/
+
   /// Called when a client has requested to remove a media item from the queue,
   /// such as via a request to [AudioService.removeQueueItem].
-  Future<void> onRemoveQueueItem(MediaItem mediaItem) async {}
 
   /// Called when a client has requested to skip to the next item in the queue,
   /// such as via a request to [AudioService.skipToNext].

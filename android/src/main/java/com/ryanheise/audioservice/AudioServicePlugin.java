@@ -447,6 +447,10 @@ public class AudioServicePlugin implements FlutterPlugin, ActivityAware {
 					backgroundHandler().invokeMethod(result, "onAddQueueItemAt", rawMediaItem, index);
 					break;
 				}
+				case "addQueueItems": {
+					backgroundHandler().invokeMethod(result, "onAddQueueItems", call.arguments);
+					break;
+				}
 				case "removeQueueItem": {
 					Map<?, ?> rawMediaItem = (Map<?, ?>)call.arguments;
 					// Cache item
