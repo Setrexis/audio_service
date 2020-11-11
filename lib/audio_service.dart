@@ -1756,6 +1756,7 @@ abstract class BackgroundAudioTask {
 
   /// Called when a client has requested to remove a media item from the queue,
   /// such as via a request to [AudioService.removeQueueItem].
+  Future<void> onRemoveQueueItem(MediaItem mediaItem) async {}
 
   /// Called when a client has requested to skip to the next item in the queue,
   /// such as via a request to [AudioService.skipToNext].
