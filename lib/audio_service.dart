@@ -1258,7 +1258,10 @@ class AudioServiceBackground {
             await _task.onAddQueueItem(MediaItem.fromJson(call.arguments[0]));
             break;
           case 'onAddQueueItems':
-            await _task.onAddQueueItems(MediaItem.fromJson(call.arguments[0]));
+            final List args = call.arguments;
+            final List queue = args[0];
+            await _task.onAddQueueItems(
+                queue?.map((raw) => MediaItem.fromJson(raw))?.toList());
             break;
           case 'onAddQueueItemAt':
             final List args = call.arguments;
