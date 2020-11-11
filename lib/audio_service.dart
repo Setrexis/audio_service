@@ -1702,8 +1702,8 @@ abstract class BackgroundAudioTask {
   /// as via a call to [AudioService.addQueueItem].
   Future<void> onAddQueueItem(MediaItem mediaItem) async {}
 
-  /// Called when a client has requested to add a media item to the queue, such
-  /// as via a call to [AudioService.addQueueItem].
+  /// Called when a client has requested to add a media items to the queue, such
+  /// as via a call to [AudioService.addQueueItems].
   Future<void> onAddQueueItems(List<MediaItem> mediaItem) async {}
 
   /// Called when the Flutter UI has requested to set a new queue.
@@ -1722,9 +1722,9 @@ abstract class BackgroundAudioTask {
   /// [AudioService.addQueueItemAt].
   Future<void> onAddQueueItemAt(MediaItem mediaItem, int index) async {}
 
-  /// Called when a client has requested to add a media item to the queue at a
+  /// Called when a client has requested to add a media items to the queue at a
   /// specified position, such as via a request to
-  /// [AudioService.addQueueItemAt].
+  /// [AudioService.addQueueItesmAt].
   Future<void> onAddQueueItesmAt(List<MediaItem> mediaItem, int index) async {}
 
   /// Called when a client has requested to remove a media item from the queue,
