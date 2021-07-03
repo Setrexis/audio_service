@@ -1,3 +1,41 @@
+## 0.17.1
+
+* Support rxdart 0.27.0.
+
+## 0.17.0
+
+* Null safety.
+* Change artUri type from String to Uri.
+
+## 0.16.2+1
+
+* Mention upcoming 0.18.0 release in README.
+
+## 0.16.2
+
+* Fix positionStream bug when seek is interrupted by onStop.
+* Fix JS name clash for MediaMetadata.
+* Update NowPlayingInfo speed correctly on iOS (@ryotayama).
+
+## 0.16.1
+
+* Fix bug in start() when using HttpOverrides.
+
+## 0.16.0
+
+* setState parameters default to previous state.
+* Change updateTime from Duration to DateTime.
+* Rename newStartRating to newStarRating.
+* Declare type of MediaItem.extras (@hacker1024).
+* Unit tests.
+* Fix compile error on macOS.
+* Update dependencies.
+
+## 0.15.3
+
+* Add positionStream and runningStream.
+* Add androidShowNotificationBadge option (@aleexbt).
+
 ## 0.15.2
 
 * Process connect/disconnect/start requests in a queue.

@@ -274,7 +274,8 @@ static MPMediaItemArtwork* artwork = nil;
     } else if ([@"setShuffleMode" isEqualToString:call.method]) {
         [backgroundChannel invokeMethod:@"onSetShuffleMode" arguments:@[call.arguments] result: result];
     } else if ([@"setRating" isEqualToString:call.method]) {
-        [backgroundChannel invokeMethod:@"onSetRating" arguments:@[call.arguments[@"rating"], call.arguments[@"extras"]] result: result];
+        NSDictionary *args = (NSDictionary *)call.arguments;
+        [backgroundChannel invokeMethod:@"onSetRating" arguments:@[args[@"rating"], args[@"extras"]] result: result];
     } else if ([@"setSpeed" isEqualToString:call.method]) {
         [backgroundChannel invokeMethod:@"onSetSpeed" arguments:@[call.arguments] result: result];
     } else if ([@"seekForward" isEqualToString:call.method]) {
@@ -389,7 +390,7 @@ static MPMediaItemArtwork* artwork = nil;
         }
         nowPlayingInfo[MPNowPlayingInfoPropertyElapsedPlaybackTime] = [NSNumber numberWithInt:([position intValue] / 1000)];
     }
-    nowPlayingInfo[MPNowPlayingInfoPropertyPlaybackRate] = [NSNumber numberWithDouble: playing ? 1.0 : 0.0];
+    nowPlayingInfo[MPNowPlayingInfoPropertyPlaybackRate] = playing ? speed: [NSNumber numberWithDouble: 0.0];
     [MPNowPlayingInfoCenter defaultCenter].nowPlayingInfo = nowPlayingInfo;
 }
 
