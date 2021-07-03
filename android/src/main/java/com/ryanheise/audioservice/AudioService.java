@@ -490,30 +490,63 @@ public class AudioService extends MediaBrowserServiceCompat {
         updateNotification();
     }
 
-    static Bitmap loadArtBitmapFromFile(String path) {
-        Bitmap bitmap = artBitmapCache.get(path);
-        if (bitmap != null) return bitmap;
-        try {
-            if (artDownscaleSize != null) {
-                BitmapFactory.Options options = new BitmapFactory.Options();
-                options.inJustDecodeBounds = true;
-                BitmapFactory.decodeFile(path, options);
-                int imageHeight = options.outHeight;
-                int imageWidth = options.outWidth;
-                options.inSampleSize = calculateInSampleSize(options, artDownscaleSize.width, artDownscaleSize.height);
-                options.inJustDecodeBounds = false;
+		static Bitmap loadArtBitmapFromFile(String path) {
+				Bitmap bitmap = artBitmapCache.get(path);
+				if (bitmap != null) return bitmap;
+				try {
+					// Check if path is not ap path but albumId from android Media Content
+					if(path.matches("[0-9]+")){
+						System.out.println(path+ " is [0-9]+ regex conform");
 
-                bitmap = BitmapFactory.decodeFile(path, options);
-            } else {
-                bitmap = BitmapFactory.decodeFile(path);
-            }
-            artBitmapCache.put(path, bitmap);
-            return bitmap;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
+						final Uri sArtworkUri = Uri.parse("content://media/external/audio/albumart");
+
+						Uri uri = ContentUris.withAppendedId(sArtworkUri, Long.parseLong(path));
+
+						ParcelFileDescriptor pfd = context.getContentResolver()
+							.openFileDescriptor(uri, "r");
+
+						if (pfd != null)
+						{
+							if (artDownscaleSize != null) {
+								BitmapFactory.Options options = new BitmapFactory.Options();
+								options.inJustDecodeBounds = true;
+								BitmapFactory.decodeFile(path, options);
+								int imageHeight = options.outHeight;
+								int imageWidth = options.outWidth;
+								options.inSampleSize = calculateInSampleSize(options, artDownscaleSize.width, artDownscaleSize.height);
+								options.inJustDecodeBounds = false;
+
+								FileDescriptor fd = pfd.getFileDescriptor();
+								bitmap = BitmapFactory.decodeFileDescriptor(fd,null,options);
+							}else{
+								FileDescriptor fd = pfd.getFileDescriptor();
+								bitmap = BitmapFactory.decodeFileDescriptor(fd);
+							}
+						}
+					}
+
+					if(bitmap == null){
+						if (artDownscaleSize != null) {
+							BitmapFactory.Options options = new BitmapFactory.Options();
+							options.inJustDecodeBounds = true;
+							BitmapFactory.decodeFile(path, options);
+							int imageHeight = options.outHeight;
+							int imageWidth = options.outWidth;
+							options.inSampleSize = calculateInSampleSize(options, artDownscaleSize.width, artDownscaleSize.height);
+							options.inJustDecodeBounds = false;
+
+							bitmap = BitmapFactory.decodeFile(path, options);
+						} else {
+							bitmap = BitmapFactory.decodeFile(path);
+						}
+					}
+					artBitmapCache.put(path, bitmap);
+					return bitmap;
+				} catch (Exception e) {
+					e.printStackTrace();
+					return null;
+				}
+			}
 
     private static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
         final int height = options.outHeight;
