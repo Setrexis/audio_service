@@ -1622,17 +1622,12 @@ class AudioServiceBackground {
     }
   }
 
-<<<<<<< HEAD
-  static Future<String> _loadArtwork(MediaItem mediaItem, {int i = 1}) async {
+  static Future<String?> _loadArtwork(MediaItem mediaItem) async {
     try {
       final artUri = mediaItem.artUri;
       if (artUri != null) {
-        String local = _getLocalPath(artUri);
-        if (local != null) {
-          return local;
-        } else if (RegExp(r"[0-9]").hasMatch(artUri)) {
-          print(artUri);
-          return artUri;
+        if (artUri.scheme == 'file') {
+          return artUri.toFilePath();
 =======
   static Future<String?> _loadArtwork(MediaItem mediaItem) async {
     try {
