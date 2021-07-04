@@ -1628,14 +1628,6 @@ class AudioServiceBackground {
       if (artUri != null) {
         if (artUri.scheme == 'file') {
           return artUri.toFilePath();
-=======
-  static Future<String?> _loadArtwork(MediaItem mediaItem) async {
-    try {
-      final artUri = mediaItem.artUri;
-      if (artUri != null) {
-        if (artUri.scheme == 'file') {
-          return artUri.toFilePath();
->>>>>>> b9c89df1f115c8e304af080afa8c8208c56f258f
         } else {
           final file =
               await _cacheManager!.getSingleFile(mediaItem.artUri!.toString());
