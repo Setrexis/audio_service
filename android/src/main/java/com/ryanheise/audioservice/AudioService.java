@@ -85,12 +85,14 @@ public class AudioService extends MediaBrowserServiceCompat {
     private static int shuffleMode;
     private static boolean notificationCreated;
 
+    private static Context context;
+
     public static void init(Activity activity, boolean resumeOnClick, String androidNotificationChannelName, String androidNotificationChannelDescription, String action, Integer notificationColor, String androidNotificationIcon, boolean androidShowNotificationBadge, boolean androidNotificationClickStartsActivity, boolean androidNotificationOngoing, boolean androidStopForegroundOnPause, Size artDownscaleSize, ServiceListener listener) {
         if (running)
             throw new IllegalStateException("AudioService already running");
         running = true;
 
-        Context context = activity.getApplicationContext();
+        context = activity.getApplicationContext();
         Intent intent = new Intent(context, activity.getClass());
         intent.setAction(action);
         contentIntent = PendingIntent.getActivity(context, REQUEST_CONTENT_INTENT, intent, PendingIntent.FLAG_UPDATE_CURRENT);
