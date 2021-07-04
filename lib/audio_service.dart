@@ -1615,10 +1615,8 @@ class AudioServiceBackground {
   }
 
   static Future<void> _loadAllArtwork(List<MediaItem> queue) async {
-    int i = 0;
     for (var mediaItem in queue) {
-      await _loadArtwork(mediaItem, i: i);
-      i++;
+      await _loadArtwork(mediaItem);
     }
   }
 
