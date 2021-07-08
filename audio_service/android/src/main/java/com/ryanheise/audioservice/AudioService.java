@@ -23,6 +23,8 @@ import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.LruCache;
 import android.view.KeyEvent;
 import android.content.ContentUris;
+import android.provider.MediaStore;
+import android.util.Size;
 
 import androidx.annotation.RequiresApi;
 import androidx.core.content.ContextCompat;
@@ -129,7 +131,7 @@ public class AudioService extends MediaBrowserServiceCompat {
                 id = (int)extras.get("id");
             }
             if (artCacheFilePath != null || (sdk != 0 && id != -1)) {
-                Bitmap bitmap = loadArtBitmapFromFile(artCacheFilePath, ""+id, sdk);
+                Bitmap bitmap = loadArtBitmapFromFile(artCacheFilePath, id, sdk);
                 if (bitmap != null) {
                     builder.putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, bitmap);
                     builder.putBitmap(MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON, bitmap);
@@ -173,13 +175,13 @@ public class AudioService extends MediaBrowserServiceCompat {
         return mediaMetadataCache.get(mediaId);
     }
 
-    Bitmap loadArtBitmapFromFile(String path, String id, int sdk) {
+    Bitmap loadArtBitmapFromFile(String path, int id, int sdk) {
         System.out.print(path+id);
         Bitmap bitmap = artBitmapCache.get(path+id);
         if (bitmap != null) return bitmap;
         try {
             if(sdk >= 29) {
-              Uri query = ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, id.toLong());
+              Uri query = ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, id);
               if (config.artDownscaleWidth != -1) {
                   bitmap = getApplicationContext().resolver.loadThumbnail(query, Size(config.artDownscaleWidth, config.artDownscaleHeight), null);
               } else {
