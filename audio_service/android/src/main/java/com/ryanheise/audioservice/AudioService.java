@@ -23,8 +23,6 @@ import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.LruCache;
 import android.view.KeyEvent;
 import android.content.ContentUris;
-import java.io.FileDescriptor;
-import android.os.ParcelFileDescriptor;
 
 import androidx.annotation.RequiresApi;
 import androidx.core.content.ContextCompat;
@@ -123,11 +121,15 @@ public class AudioService extends MediaBrowserServiceCompat {
         if (artUri != null) {
             builder.putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON_URI, artUri);
             String artCacheFilePath = null;
+            int sdk = 0;
+            int id = -1;
             if (extras != null) {
                 artCacheFilePath = (String)extras.get("artCacheFile");
+                sdk = (int)extras.get("sdk");
+                id = (int)extras.get("id");
             }
-            if (artCacheFilePath != null) {
-                Bitmap bitmap = loadArtBitmapFromFile(artCacheFilePath);
+            if (artCacheFilePath != null || (sdk != 0 && id != -1)) {
+                Bitmap bitmap = loadArtBitmapFromFile(artCacheFilePath, ""+id, sdk);
                 if (bitmap != null) {
                     builder.putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, bitmap);
                     builder.putBitmap(MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON, bitmap);
@@ -171,42 +173,22 @@ public class AudioService extends MediaBrowserServiceCompat {
         return mediaMetadataCache.get(mediaId);
     }
 
-    Bitmap loadArtBitmapFromFile(String path) {
-        Bitmap bitmap = artBitmapCache.get(path);
+    Bitmap loadArtBitmapFromFile(String path, String id, int sdk) {
+        System.out.print(path+id);
+        Bitmap bitmap = artBitmapCache.get(path+id);
         if (bitmap != null) return bitmap;
         try {
-            // Check if path is not ap path but albumId from android Media Content
-  					if(path.matches("[0-9]+")){
-  						System.out.println(path+ " is [0-9]+ regex conform");
-
-  						final Uri sArtworkUri = Uri.parse("content://media/external/audio/albumart");
-
-  						Uri uri = ContentUris.withAppendedId(sArtworkUri, Long.parseLong(path));
-
-  						ParcelFileDescriptor pfd = getApplicationContext().getContentResolver()
-  							.openFileDescriptor(uri, "r");
-
-  						if (pfd != null)
-  						{
-                if (config.artDownscaleWidth != -1) {
-                    BitmapFactory.Options options = new BitmapFactory.Options();
-                    options.inJustDecodeBounds = true;
-                    options.inSampleSize = calculateInSampleSize(options, config.artDownscaleWidth, config.artDownscaleHeight);
-                    options.inJustDecodeBounds = false;
-
-                    FileDescriptor fd = pfd.getFileDescriptor();
-								    bitmap = BitmapFactory.decodeFileDescriptor(fd,null,options);
-                } else {
-                    FileDescriptor fd = pfd.getFileDescriptor();
-                    bitmap = BitmapFactory.decodeFileDescriptor(fd);
-                }
-  						}
-  					}
-
-            if(bitmap != null) {
-              artBitmapCache.put(path, bitmap);
+            if(sdk >= 29) {
+              Uri query = ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, id.toLong());
+              if (config.artDownscaleWidth != -1) {
+                  bitmap = getApplicationContext().resolver.loadThumbnail(query, Size(config.artDownscaleWidth, config.artDownscaleHeight), null);
+              } else {
+                  bitmap = getApplicationContext().resolver.loadThumbnail(query, Size(250, 250), null); // TODO figureout a proper default size
+              }
+              artBitmapCache.put(path+id, bitmap);
               return bitmap;
             }
+
             if (config.artDownscaleWidth != -1) {
                 BitmapFactory.Options options = new BitmapFactory.Options();
                 options.inJustDecodeBounds = true;
@@ -222,6 +204,7 @@ public class AudioService extends MediaBrowserServiceCompat {
             }
             artBitmapCache.put(path, bitmap);
             return bitmap;
+
         } catch (Exception e) {
             e.printStackTrace();
             return null;
