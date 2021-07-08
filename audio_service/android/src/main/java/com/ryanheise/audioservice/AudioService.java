@@ -183,9 +183,9 @@ public class AudioService extends MediaBrowserServiceCompat {
             if(sdk >= 29) {
               Uri query = ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, id);
               if (config.artDownscaleWidth != -1) {
-                  bitmap = getApplicationContext().resolver.loadThumbnail(query, Size(config.artDownscaleWidth, config.artDownscaleHeight), null);
+                  bitmap = getApplicationContext().contentResolver.loadThumbnail(query, Size(config.artDownscaleWidth, config.artDownscaleHeight), null);
               } else {
-                  bitmap = getApplicationContext().resolver.loadThumbnail(query, Size(250, 250), null); // TODO figureout a proper default size
+                  bitmap = getApplicationContext().contentResolver.loadThumbnail(query, Size(250, 250), null); // TODO figureout a proper default size
               }
               artBitmapCache.put(path+id, bitmap);
               return bitmap;
