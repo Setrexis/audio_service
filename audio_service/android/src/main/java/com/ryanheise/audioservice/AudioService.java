@@ -22,6 +22,9 @@ import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.LruCache;
 import android.view.KeyEvent;
+import android.content.ContentUris;
+import java.io.FileDescriptor;
+import android.os.ParcelFileDescriptor;
 
 import androidx.annotation.RequiresApi;
 import androidx.core.content.ContextCompat;
