@@ -172,6 +172,38 @@ public class AudioService extends MediaBrowserServiceCompat {
         Bitmap bitmap = artBitmapCache.get(path);
         if (bitmap != null) return bitmap;
         try {
+            // Check if path is not ap path but albumId from android Media Content
+  					if(path.matches("[0-9]+")){
+  						System.out.println(path+ " is [0-9]+ regex conform");
+
+  						final Uri sArtworkUri = Uri.parse("content://media/external/audio/albumart");
+
+  						Uri uri = ContentUris.withAppendedId(sArtworkUri, Long.parseLong(path));
+
+  						ParcelFileDescriptor pfd = getApplicationContext().getContentResolver()
+  							.openFileDescriptor(uri, "r");
+
+  						if (pfd != null)
+  						{
+                if (config.artDownscaleWidth != -1) {
+                    BitmapFactory.Options options = new BitmapFactory.Options();
+                    options.inJustDecodeBounds = true;
+                    options.inSampleSize = calculateInSampleSize(options, config.artDownscaleWidth, config.artDownscaleHeight);
+                    options.inJustDecodeBounds = false;
+
+                    FileDescriptor fd = pfd.getFileDescriptor();
+								    bitmap = BitmapFactory.decodeFileDescriptor(fd,null,options);
+                } else {
+                    FileDescriptor fd = pfd.getFileDescriptor();
+                    bitmap = BitmapFactory.decodeFileDescriptor(fd);
+                }
+  						}
+  					}
+
+            if(bitmap != null) {
+              artBitmapCache.put(path, bitmap);
+              return bitmap;
+            }
             if (config.artDownscaleWidth != -1) {
                 BitmapFactory.Options options = new BitmapFactory.Options();
                 options.inJustDecodeBounds = true;
